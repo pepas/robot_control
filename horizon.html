@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<title>Robot control</title>
+	<style type="text/css">
+            body {
+                    background-color: white;
+                 }
+	    #control {
+         	 margin-top: 10px;
+         	 margin-bottom: 10px;
+        	 margin-right: 5px;
+        	 margin-left: 50px;
+         	}
+	    #front {
+         	margin: 2px 46px;
+         	}
+	    .parent {
+	     	 position: relative;
+ 	 	 top: 70px;
+  		 left: 50px;
+		}
+	    #image1 {
+  		position: relative;
+  		top: 0;
+ 	 	left: 0;
+		width: 300px;
+		}
+	    #image2 {
+  		position: absolute;
+  		top: 0px;
+ 	 	left: 0px;
+		width: 300px;
+		}
+	    #image3 {
+  		position: absolute;
+  		top: 0px;
+  		left: 0px;
+		width: 300px;
+        	}
+	    #image4 {
+  		position: absolute;
+ 		top: 0px;
+  		left: 0px;
+		width: 300px;
+        	}
+        </style>
+ </head>
+  <body>
+	<h1>Control</h1>
+	<div id="control">
+	   <p> <button id="front" onclick="vpred()">W↑</button> </p>
+	   <p> <button id="left" onclick="leva()">A<-</button> 
+	       <button id="back" onclick="vzad()">S↓</button>         
+	       <button id="right" onclick="prava()">D-></button>
+	   </p>
+	</div>
+	<div class="parent">
+  	  <img id="image1" src="img/horizon_back.svg" />
+  	  <img id="image2" src="img/horizon_ball.svg" />
+  	  <img id="image3" src="img/horizon_circle.svg" />
+  	  <img id="image4" src="img/horizon_mechanics.svg" />
+	</div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      var socket = io();
+
+      socket.on("data", function(data){
+        datas=String.fromCharCode.apply(null, new Uint8Array(data));
+        var dataArray = datas.split(" ");
+        roll(Number(dataArray[3]));
+	pitch(Number(dataArray[2]));
+	});
+
+      function pitch(angle) {
+	 var img2 = document.getElementById('image2');
+	 img2.style.top =  angle*0.7 + '%';
+	}
+
+      function roll(angle) {
+	angle=angle + 6;
+	 var img1 = document.getElementById('image1');
+         var img2 = document.getElementById('image2');
+         var img3 = document.getElementById('image3');
+        img1.style.transform = 'rotate(' + angle + 'deg)';
+        img2.style.transform = 'rotate(' + angle + 'deg)';
+        img3.style.transform = 'rotate(' + angle + 'deg)';
+	}
+    
+      function vpred() {	 
+           socket.emit("pohyb", "w");
+        }
+      function vzad() {
+           socket.emit("pohyb", "s");
+        }
+      function leva() {
+           socket.emit("pohyb", "a");
+        }
+      function prava() {
+           socket.emit("pohyb", "d");
+        }
+	var front = false,
+    	right = false,
+    	back = false,
+    	left = false
+	document.addEventListener('keydown',press)
+	function press(e){
+  	if (e.keyCode === 87 && front===false){
+		socket.emit("pohyb", "w");
+    		front = true;
+  	}
+  	if (e.keyCode === 68 /* d */&& right===false){
+		socket.emit("pohyb", "d");
+    		right = true;
+  	}
+  	if (e.keyCode === 83 /* s */&&back===false){
+    		socket.emit("pohyb", "s");
+		back = true;
+  	}
+  	if (e.keyCode === 65 /* a */&&left===false){
+    		socket.emit("pohyb", "a");
+		left = true;
+  	}
+	}
+	document.addEventListener('keyup',release)
+        function release(e){
+        if (e.keyCode === 87 /* w */){
+                socket.emit("pohyb", "b");
+		front = false;
+        }
+        if (e.keyCode === 68 /* d */){
+		socket.emit("pohyb", "b");
+                right = false;
+        }
+        if (e.keyCode === 83 /* s */){
+		socket.emit("pohyb", "b");
+                back = false;
+        }
+        if (e.keyCode === 65 /* a */){
+		socket.emit("pohyb", "b");
+                left = false;
+        }
+        }
+
+    </script>	
+</body>
+</html>
