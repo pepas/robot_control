@@ -71,7 +71,7 @@
         datas=String.fromCharCode.apply(null, new Uint8Array(data));
         var dataArray = datas.split(" ");
         roll(Number(dataArray[3]));
-	pitch(Number(dataArray[2]));
+		pitch(Number(dataArray[2]));
 	});
 
       function pitch(angle) {
@@ -80,8 +80,8 @@
 	}
 
       function roll(angle) {
-	angle=angle + 6;
-	 var img1 = document.getElementById('image1');
+		angle=angle + 6;
+	 	var img1 = document.getElementById('image1');
          var img2 = document.getElementById('image2');
          var img3 = document.getElementById('image3');
         img1.style.transform = 'rotate(' + angle + 'deg)';
@@ -111,15 +111,15 @@
 		socket.emit("pohyb", "w");
     		front = true;
   	}
-  	if (e.keyCode === 68 /* d */&& right===false){
+  	if (e.keyCode === 68 && right===false){
 		socket.emit("pohyb", "d");
     		right = true;
   	}
-  	if (e.keyCode === 83 /* s */&&back===false){
+  	if (e.keyCode === 83 &&back===false){
     		socket.emit("pohyb", "s");
 		back = true;
   	}
-  	if (e.keyCode === 65 /* a */&&left===false){
+  	if (e.keyCode === 65 &&left===false){
     		socket.emit("pohyb", "a");
 		left = true;
   	}
