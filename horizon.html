@@ -9,10 +9,14 @@
                  }
 	    #control {
          	 margin-top: 10px;
-         	 margin-bottom: 10px;
-        	 margin-right: 5px;
-        	 margin-left: 50px;
+        	 margin-left: 60px;
+		 width: 300px;
          	}
+	    #webcam {
+                 margin-top: 10px;
+                 margin-left: 500px;
+		 width: 500px;
+                }
 	    #front {
          	margin: 2px 46px;
          	}
@@ -20,6 +24,7 @@
 	     	 position: relative;
  	 	 top: 70px;
   		 left: 50px;
+		 width: 300px;
 		}
 	    #image1 {
   		position: relative;
@@ -48,20 +53,23 @@
         </style>
  </head>
   <body>
-	<h1>Control</h1>
 	<div id="control">
+	   <h3>Control</h3>
 	   <p> <button id="front" onclick="vpred()">W↑</button> </p>
 	   <p> <button id="left" onclick="leva()">A<-</button> 
 	       <button id="back" onclick="vzad()">S↓</button>         
 	       <button id="right" onclick="prava()">D-></button>
 	   </p>
 	</div>
+	 <div id="webcam"><noscript><img src="./?action=snapshot" /></noscript></div>
 	<div class="parent">
   	  <img id="image1" src="img/horizon_back.svg" />
   	  <img id="image2" src="img/horizon_ball.svg" />
   	  <img id="image3" src="img/horizon_circle.svg" />
   	  <img id="image4" src="img/horizon_mechanics.svg" />
 	</div>
+
+     <body onload="createImageLayer();">
 
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
@@ -71,7 +79,7 @@
         datas=String.fromCharCode.apply(null, new Uint8Array(data));
         var dataArray = datas.split(" ");
         roll(Number(dataArray[3]));
-		pitch(Number(dataArray[2]));
+	pitch(Number(dataArray[2]));
 	});
 
       function pitch(angle) {
@@ -80,8 +88,8 @@
 	}
 
       function roll(angle) {
-		angle=angle + 6;
-	 	var img1 = document.getElementById('image1');
+	angle=angle + 6;
+	 var img1 = document.getElementById('image1');
          var img2 = document.getElementById('image2');
          var img3 = document.getElementById('image3');
         img1.style.transform = 'rotate(' + angle + 'deg)';
@@ -111,15 +119,15 @@
 		socket.emit("pohyb", "w");
     		front = true;
   	}
-  	if (e.keyCode === 68 && right===false){
+  	if (e.keyCode === 68 /* d */&& right===false){
 		socket.emit("pohyb", "d");
     		right = true;
   	}
-  	if (e.keyCode === 83 &&back===false){
+  	if (e.keyCode === 83 /* s */&&back===false){
     		socket.emit("pohyb", "s");
 		back = true;
   	}
-  	if (e.keyCode === 65 &&left===false){
+  	if (e.keyCode === 65 /* a */&&left===false){
     		socket.emit("pohyb", "a");
 		left = true;
   	}
@@ -143,7 +151,29 @@
                 left = false;
         }
         }
+	var imageNr = 0;
+	var finished = new Array(); 
 
+	function createImageLayer() {
+  		var img = new Image();
+  		img.style.position = "absolute";
+  		img.style.zIndex = -1;
+  		img.onload = imageOnload;
+		//192.168.7.2 for usb, 10.1.1.100 ethernet (static IP)
+  		img.src = "http://192.168.7.2:8090/?action=snapshot&n=" + (++imageNr);
+  		var webcam = document.getElementById("webcam");
+  		webcam.insertBefore(img, webcam.firstChild);
+	}
+
+	function imageOnload() {
+  		//this.style.zIndex = imageNr;
+  	    while (1 < finished.length) {
+    		var del = finished.shift();
+    		del.parentNode.removeChild(del);
+  	    }
+  		finished.push(this);
+		createImageLayer();
+	}
     </script>	
 </body>
 </html>
