@@ -2,19 +2,16 @@
 """
 Created on  Apr 22 11:40w 2019
 
-@author: josef.svec
+@author: jindrich.jansa, josef.svec
 """
 # TODO - reset AB and CD -> start PWM -> enable AB and CD
-import smbus
 import time 
 import os, sys, termios, tty
 import Adafruit_BBIO.PWM as PWM
 import Adafruit_BBIO.GPIO as GPIO
 
-address =0x44
-bus=smbus.SMBus(1)
-Angle_R=60
-Angle_P=60
+Angle_R=50
+Angle_P=50
 button_delay = 0.1 #[s] insensivity of the buttons
 duration = 0.3 #[s] duration of the selected action
 PWM_f = 20000 #[Hz]
@@ -37,6 +34,8 @@ LED2 = "P8_19"
 EN_3V3 = "P8_18"
 #in_OTW = "P8_8"
 #in_FAULT= "P8_7"
+kamera_a = "P9_21"
+kamera_b = "P9_22"
 
 # print(PWM.VERSION)
 PWM.cleanup()
@@ -50,6 +49,8 @@ GPIO.output(reset_CD, GPIO.LOW)
 GPIO.output(EN_3V3, GPIO.LOW)
 PWM.start(motor_l)
 PWM.start(motor_p)
+PWM.start(kamera_a)
+PWM.start(kamera_b)
 # PWM.set_frequency(motor_l, PWM_f)
 # PWM.set_frequency(motor_l, PWM_f)
 PWM.set_duty_cycle(motor_l, 50)
@@ -133,25 +134,25 @@ def LRoll():
     Angle_R=Angle_R+5
     if Angle_R>175:
 	Angle_R=175
-    bus.write_byte_data(address,4,Angle_R)
+    PWM.set_duty_cycle(kamera_a, Angle_R)
 def RRoll():
     global Angle_R
     Angle_R=Angle_R-5
     if Angle_R<5:
 	Angle_R=5
-    bus.write_byte_data(address,4,Angle_R)
+    PWM.set_duty_cycle(kamera_a, Angle_R)
 def DPitch():
     global Angle_P
     Angle_P=Angle_P+5
     if Angle_P>175:
 	Angle_P=175
-    bus.write_byte_data(address,3,Angle_P)
+    PWM.set_duty_cycle(kamera_b, Angle_P)
 def UPitch():
     global Angle_P
     Angle_P=Angle_P-5
     if Angle_P<5:
 	Angle_P=5
-    bus.write_byte_data(address,3,Angle_P)
+    PWM.set_duty_cycle(kamera_b, Angle_P)
 # Read an character via the serial
 def getch():
     fd = sys.stdin.fileno()
@@ -197,16 +198,16 @@ while True:
     elif (char == "q"):
         LSlant()
         time.sleep(button_delay)
-    elif (char == "n"):
+    elif (char == "n\n"):
         LRoll()
         time.sleep(button_delay)
-    elif (char == "m"):
+    elif (char == "m\n"):
         RRoll()
         time.sleep(button_delay)
-    elif (char == "k"):
+    elif (char == "k\n"):
         DPitch()
         time.sleep(button_delay)
-    elif (char == "i"):
+    elif (char == "i\n"):
         UPitch()
         time.sleep(button_delay)
     elif (char == "e"):

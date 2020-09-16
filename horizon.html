@@ -8,18 +8,32 @@
                     background-color: white;
                  }
 	    #control {
-         	 margin-top: 10px;
         	 margin-left: 60px;
-		 width: 300px;
+		 width: 200px;	
+		 display:inline-block;
          	}
+	    #camera {
+                 margin-left: 0px;
+		 width: 200px;
+		 display:inline-block;
+                }
+	    #front {
+                margin: 2px 46px;
+                }
+	    #brake {
+                margin: 2px 40px;
+                }
 	    #webcam {
                  margin-top: 10px;
                  margin-left: 500px;
 		 width: 500px;
                 }
-	    #front {
-         	margin: 2px 46px;
+	    #up {
+         	margin: 2px 26px;
          	}
+	    #down {
+                margin: 2px 20px;
+                }
 	    .parent {
 	     	 position: relative;
  	 	 top: 70px;
@@ -58,9 +72,18 @@
 	   <p> <button id="front" onclick="vpred()">W↑</button> </p>
 	   <p> <button id="left" onclick="leva()">A<-</button> 
 	       <button id="back" onclick="vzad()">S↓</button>         
-	       <button id="right" onclick="prava()">D-></button>
-	   </p>
+	       <button  id="right" onclick="prava()">D-></button>
+	   <p><button id="brake" onclick="brzda()">Brake</button> </p>
+
 	</div>
+	 <div id="camera">
+           <h3>Camera</h3>
+           <p> <button id="up" onclick="nahoru()">up</button> </p>
+           <p> <button id="left" onclick="doleva()">left</button>
+               <button id="right" onclick="doprava()">right</button>
+           </p>
+	    <p><button id="down" onclick="dolu()">down</button> </p>
+        </div>
 	 <div id="webcam"><noscript><img src="./?action=snapshot" /></noscript></div>
 	<div class="parent">
   	  <img id="image1" src="img/horizon_back.svg" />
@@ -96,7 +119,22 @@
         img2.style.transform = 'rotate(' + angle + 'deg)';
         img3.style.transform = 'rotate(' + angle + 'deg)';
 	}
-    
+       function nahoru() {
+           socket.emit("pohyb", "i");
+        }
+      function dolu() {
+           socket.emit("pohyb", "k");
+        }
+      function doleva() {
+           socket.emit("pohyb", "n");
+        }
+
+      function doprava() {
+           socket.emit("pohyb", "m");
+        }
+      function brzda() {
+           socket.emit("pohyb", "b");
+        }
       function vpred() {	 
            socket.emit("pohyb", "w");
         }
