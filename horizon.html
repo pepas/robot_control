@@ -21,8 +21,12 @@
                 margin: 2px 46px;
                 }
 	    #brake {
-                margin: 2px 40px;
+                margin: 2px 5px;
                 }
+	     #svetlo {
+                margin: 2px 5px;
+                }
+
 	    #webcam {
                  margin-top: 10px;
                  margin-left: 500px;
@@ -73,8 +77,8 @@
 	   <p> <button id="left" onclick="leva()">A<-</button> 
 	       <button id="back" onclick="vzad()">S↓</button>         
 	       <button  id="right" onclick="prava()">D-></button>
-	   <p><button id="brake" onclick="brzda()">Brake</button> </p>
-
+	   <p><button id="brake" onclick="brzda()">Brake</button> 
+	      <button id="svetlo" onclick="svetlo()">Light</button> </p>
 	</div>
 	 <div id="camera">
            <h3>Camera</h3>
@@ -101,8 +105,8 @@
       socket.on("data", function(data){
         datas=String.fromCharCode.apply(null, new Uint8Array(data));
         var dataArray = datas.split(" ");
-        roll(Number(dataArray[3]));
-	pitch(Number(dataArray[2]));
+        roll(Number(dataArray[2]));
+	pitch(Number(dataArray[3]));
 	});
 
       function pitch(angle) {
@@ -111,7 +115,6 @@
 	}
 
       function roll(angle) {
-	angle=angle + 6;
 	 var img1 = document.getElementById('image1');
          var img2 = document.getElementById('image2');
          var img3 = document.getElementById('image3');
@@ -134,6 +137,9 @@
         }
       function brzda() {
            socket.emit("pohyb", "b");
+        }
+      function svetlo() {
+           socket.emit("pohyb", "l");
         }
       function vpred() {	 
            socket.emit("pohyb", "w");
@@ -198,13 +204,13 @@
   		img.style.zIndex = -1;
   		img.onload = imageOnload;
 		//192.168.7.2 for usb, 10.1.1.100 ethernet (static IP)
-  		img.src = "http://192.168.7.2:8090/?action=snapshot&n=" + (++imageNr);
+  		img.src = "http://10.1.1.100:8090/?action=snapshot&n=" + (++imageNr);
   		var webcam = document.getElementById("webcam");
   		webcam.insertBefore(img, webcam.firstChild);
 	}
 
 	function imageOnload() {
-  		//this.style.zIndex = imageNr;
+  		this.style.zIndex = imageNr;
   	    while (1 < finished.length) {
     		var del = finished.shift();
     		del.parentNode.removeChild(del);

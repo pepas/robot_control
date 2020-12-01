@@ -17,7 +17,7 @@ duration = 0.3 #[s] duration of the selected action
 PWM_f = 20000 #[Hz]
 duty_max = 95
 duty_min = 50
-duty_current = 90
+duty_current = 95
 
 LED_PWM_f = 500
 LED_duty_max = 50
@@ -29,7 +29,7 @@ motor_l = "P9_14"
 motor_p = "P9_16"
 reset_AB = "P8_15"
 reset_CD = "P8_16"
-#LED1 = "P8_13"
+LED1 = "P8_13"
 LED2 = "P8_19"
 EN_3V3 = "P8_18"
 #in_OTW = "P8_8"
@@ -37,8 +37,13 @@ EN_3V3 = "P8_18"
 kamera_a = "P9_21"
 kamera_b = "P9_22"
 
-# print(PWM.VERSION)
 PWM.cleanup()
+
+PWM.start(LED2)
+PWM.set_frequency(LED2, LED_PWM_f)
+#PWM.set_duty_cycle(LED2, 20)
+
+# print(PWM.VERSION)
 # GPIO.setup(in_OTW, GPIO.IN)
 # GPIO.setup(in_FAULT, GPIO.IN)
 GPIO.setup(reset_AB, GPIO.OUT)
@@ -56,9 +61,6 @@ PWM.start(kamera_b)
 PWM.set_duty_cycle(motor_l, 50)
 PWM.set_duty_cycle(motor_p, 50)
 
-	#PWM.start(LED2)
-	#PWM.set_frequency(LED2, LED_PWM_f)
-	#PWM.set_duty_cycle(LED2, 0)
 def cls():
     os.system("clear")
 
@@ -213,7 +215,7 @@ while True:
     elif (char == "e"):
         RSlant()
         time.sleep(button_delay)
-    elif (char == "l"):
+    elif (char == "l\n"):
         Light()
         time.sleep(button_delay)
    # print("speed: ", duty_current)

@@ -75,7 +75,7 @@ bus = smbus.SMBus(2) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68   # MPU6050 device address
 
 MPU_Init()
-calib()
+#calib()
 
 print (" Reading Data of Gyroscope and Accelerometer")
 AX=0
@@ -92,22 +92,22 @@ while True:
 	acc_z = read_raw_data(ACCEL_ZOUT_H)
 	
 	#Read Gyroscope raw value
-	gyro_x = read_raw_data(GYRO_XOUT_H)
-	gyro_y = read_raw_data(GYRO_YOUT_H)
-	gyro_z = read_raw_data(GYRO_ZOUT_H)
+	#gyro_x = read_raw_data(GYRO_XOUT_H)
+	#gyro_y = read_raw_data(GYRO_YOUT_H)
+	#gyro_z = read_raw_data(GYRO_ZOUT_H)
 	
 	#Full scale range +/- 250 degree/C as per sensitivity scale factor
 	Ay = - acc_x/16384.0 * 180 / PI
 	Ax = acc_y/16384.0 * 180 / PI
 	Az = 0
 	
-	Gx = gyro_x/131.0 - GyroErrorX
-	Gy = gyro_y/131.0 - GyroErrorY
-	Gz = gyro_z/131.0 - GyroErrorZ
-	AX = AX + Gx  
-        AY = AY + Gy 
-	ax= 0.5 * AX + 0.5 * Ax
-        ay= 0.5 * AY + 0.5 * Ay
+	#Gx = gyro_x/131.0 - GyroErrorX
+	#Gy = gyro_y/131.0 - GyroErrorY
+	#Gz = gyro_z/131.0 - GyroErrorZ
+	#AX = AX + Gx  
+        #AY = AY + Gy 
+	#ax= 0.5 * AX + 0.5 * Ax
+        #ay= 0.5 * AY + 0.5 * Ay
 	i=i+1	
 	Axsum=Axsum+Ax
 	Aysum=Aysum+Ay
