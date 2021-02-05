@@ -50,7 +50,7 @@
           width: 450px;
 		    }
 	    #image1 {
-          position: relative;
+          position: absolute;
           top: 0;
           left: 0;
           width: 300px;
@@ -100,6 +100,7 @@
       </div>
      <div id="par">
      <div class="parent">
+	 <p id="p1">Spojeni IMU</p>  
         <img id="image1" src="img/horizon_back.svg" />
         <img id="image2" src="img/horizon_ball.svg" />
         <img id="image3" src="img/horizon_circle.svg" />
@@ -115,14 +116,22 @@
       var socket = io();
         socket.on("data", function(data){
         datas=String.fromCharCode.apply(null, new Uint8Array(data));
-        var dataArray = datas.split(" ");
-        roll(Number(dataArray[2]));
-	      pitch(Number(dataArray[3]));
-	      });
+	if(datas.length>20){
+		document.getElementById("p1").innerHTML = "Spojeni X";
+	}else{
+		document.getElementById("p1").innerHTML = "Spojeni OK";
+		var dataArray = datas.split(" ");
+        	roll(Number(dataArray[2]));
+                pitch(Number(dataArray[3]));
+		if(Number(dataArray[2])===0 && Number(dataArray[3])===0){
+			 document.getElementById("p1").innerHTML = "Přerušeno napájení";
+	     	}
+	}
+	});
 
       function pitch(angle) {
         var img2 = document.getElementById('image2');
-        img2.style.top =  angle*0.7 + '%';
+        img2.style.top =  angle*0.3 + '%';
         }
 
       function roll(angle) {
