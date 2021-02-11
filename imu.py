@@ -116,6 +116,9 @@ while True:
 	if i==9:
 		Axprum=Axsum/10.0
 		Ayprum=Aysum/10.0
+		if Axprum==0 and Ayprum==0:
+		    print("Inicializace")
+		    MPU_Init()
 		print "%.2f"%Az,"%.2f"%Axprum,"%.2f" %Ayprum,
 		sys.stdout.flush()
 		Axsum=0
