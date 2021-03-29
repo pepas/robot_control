@@ -9,9 +9,10 @@ import time
 import os, sys, termios, tty
 import Adafruit_BBIO.PWM as PWM
 import Adafruit_BBIO.GPIO as GPIO
+import subprocess
 
-Angle_R=50
-Angle_P=50
+Angle_R=1500000
+Angle_P=1500000
 button_delay = 0.1 #[s] insensivity of the buttons
 duration = 0.3 #[s] duration of the selected action
 PWM_f = 20000 #[Hz]
@@ -24,7 +25,7 @@ LED_duty_max = 50
 LED_duty_min = 0
 LED_duty_current = 0
 
-
+SERV_PWM_f=60
 motor_l = "P9_14"
 motor_p = "P9_16"
 reset_AB = "P8_15"
@@ -38,11 +39,18 @@ kamera_a = "P9_21"
 kamera_b = "P9_22"
 
 PWM.cleanup()
+subprocess.Popen("config-pin -a p9-21 pwm",shell=True)
+subprocess.Popen("config-pin -a p9-22 pwm",shell=True)
+subprocess.Popen("echo 0 > export",cwd="/sys/class/pwm/pwmchip1",shell=True)
+subprocess.Popen("echo 1 > export",cwd="/sys/class/pwm/pwmchip1",shell=True)
+subprocess.Popen("sudo sh -c 'echo 16666666 > period'",cwd="/sys/class/pwm/pwm-1:0",shell=True)
+subprocess.Popen("sudo sh -c 'echo 16666666 > period'",cwd="/sys/class/pwm/pwm-1:1",shell=True)
+subprocess.Popen("sudo sh -c 'echo 1 > enable'",cwd="/sys/class/pwm/pwm-1:0",shell=True)
+subprocess.Popen("sudo sh -c 'echo 1 > enable'",cwd="/sys/class/pwm/pwm-1:1",shell=True)
 
 PWM.start(LED2)
 PWM.set_frequency(LED2, LED_PWM_f)
-#PWM.set_duty_cycle(LED2, 20)
-
+PWM.set_duty_cycle(LED2, 20)
 # print(PWM.VERSION)
 # GPIO.setup(in_OTW, GPIO.IN)
 # GPIO.setup(in_FAULT, GPIO.IN)
@@ -54,12 +62,6 @@ GPIO.output(reset_CD, GPIO.LOW)
 GPIO.output(EN_3V3, GPIO.LOW)
 PWM.start(motor_l)
 PWM.start(motor_p)
-PWM.start(kamera_a)
-PWM.start(kamera_b)
-# PWM.set_frequency(motor_l, PWM_f)
-# PWM.set_frequency(motor_l, PWM_f)
-PWM.set_duty_cycle(motor_l, 50)
-PWM.set_duty_cycle(motor_p, 50)
 
 def cls():
     os.system("clear")
@@ -133,28 +135,32 @@ def Light():
 
 def LRoll():
     global Angle_R
-    Angle_R=Angle_R+5
-    if Angle_R>175:
-	Angle_R=175
-    PWM.set_duty_cycle(kamera_a, Angle_R)
+    Angle_R=Angle_R+90000
+    if Angle_R>2000000:
+	Angle_R=2000000
+    command="sudo sh -c 'echo "+str(Angle_R)+" > duty_cycle'"
+    subprocess.Popen(command,cwd="/sys/class/pwm/pwm-1:1",shell=True)
 def RRoll():
     global Angle_R
-    Angle_R=Angle_R-5
-    if Angle_R<5:
-	Angle_R=5
-    PWM.set_duty_cycle(kamera_a, Angle_R)
+    Angle_R=Angle_R-90000
+    if Angle_R<600000:
+	Angle_R=600000
+    command="sudo sh -c 'echo "+str(Angle_R)+" > duty_cycle'"
+    subprocess.Popen(command,cwd="/sys/class/pwm/pwm-1:1",shell=True)
 def DPitch():
     global Angle_P
-    Angle_P=Angle_P+5
-    if Angle_P>175:
-	Angle_P=175
-    PWM.set_duty_cycle(kamera_b, Angle_P)
+    Angle_P=Angle_P+90000
+    if Angle_P>2000000:
+	Angle_P=2000000
+    command="sudo sh -c 'echo "+str(Angle_P)+" > duty_cycle'"
+    subprocess.Popen(command,cwd="/sys/class/pwm/pwm-1:0",shell=True)
 def UPitch():
     global Angle_P
-    Angle_P=Angle_P-5
-    if Angle_P<5:
-	Angle_P=5
-    PWM.set_duty_cycle(kamera_b, Angle_P)
+    Angle_P=Angle_P-90000
+    if Angle_P<600000:
+	Angle_P=600000
+    command="sudo sh -c 'echo "+str(Angle_P)+" > duty_cycle'"
+    subprocess.Popen(command,cwd="/sys/class/pwm/pwm-1:0",shell=True)
 # Read an character via the serial
 def getch():
     fd = sys.stdin.fileno()
