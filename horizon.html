@@ -19,7 +19,7 @@
                 }
       	    #camera {
             margin-left: 0px;
-            width: 200px;
+            width: 300px;
             display:inline-block;
 		 }
 	    #cam {
@@ -94,10 +94,11 @@
             <p><button id="down" onclick="dolu()">down</button> </p>
       </div>
       <div id="camera">
-            <h3>Camera record</h3>
+            <h3>Camera</h3>
             <button id="record">Start Recording</button>
             <button id="download" disabled>Download</button>
-      </div>
+      	     <button id="other" onclick="jinakam()">Other camera</button>
+	</div>
      <div id="par">
      <div class="parent">
 	 <p id="p1">Spojeni IMU</p>  
@@ -173,6 +174,10 @@
       function prava() {
            socket.emit("pohyb", "d");
         }
+      function jinakam() {
+           socket.emit("pohyb", "c");
+        }
+
 	var front = false,
     	right = false,
     	back = false,

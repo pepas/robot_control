@@ -2,7 +2,9 @@
 
 cd /opt/scripts/tools/software/mjpg-streamer/
 #resolution can be changed in mjpg-streamer.service
-sudo ./install_mjpg_streamer.sh
+sudo install -m 644 ./mjpg-streamer.service /etc/systemd/system
+sudo systemctl daemon-reload || true
+sudo systemctl restart mjpg-streamer || true
 
 cd /home/debian/robot_control
 

@@ -13,6 +13,7 @@ import subprocess
 
 Angle_R=1500000
 Angle_P=1500000
+video0=False
 button_delay = 0.1 #[s] insensivity of the buttons
 duration = 0.3 #[s] duration of the selected action
 PWM_f = 20000 #[Hz]
@@ -224,6 +225,18 @@ while True:
     elif (char == "l\n"):
         Light()
         time.sleep(button_delay)
+    elif (char == "c\n"):
+	if video0:
+	    subprocess.Popen("sed -i 's/video0/video1/' /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service",shell=True)
+  	    video0=False
+	else:
+	    subprocess.Popen("sed -i 's/video1/video0/' /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service",shell=True)
+	    video0=True
+	subprocess.Popen("sudo install -m 644 /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service /etc/systemd/system",shell=True)
+	#time.sleep(10)
+	subprocess.Popen("sudo systemctl daemon-reload",shell=True)
+	subprocess.Popen("sudo systemctl restart mjpg-streamer || true",shell=True)
+
    # print("speed: ", duty_current)
    # print("pitch: ", Angle_P)
    # print("roll: ", Angle_R)
