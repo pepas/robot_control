@@ -87,11 +87,11 @@
     </div>
     <div id="camera_mov">
             <h3>Camera movements</h3>
-            <p> <button id="up" onclick="nahoru()">up</button> </p>
-            <p> <button id="left" onclick="doleva()">left</button>
-                <button id="right" onclick="doprava()">right</button>
+            <p> <button id="up" onclick="nahoru()">dwn</button> </p>
+            <p> <button id="left" onclick="doleva()">ccw</button>
+                <button id="right" onclick="doprava()">cw</button>
             </p>
-            <p><button id="down" onclick="dolu()">down</button> </p>
+            <p><button id="down" onclick="dolu()">up</button> </p>
       </div>
       <div id="camera">
             <h3>Camera</h3>
@@ -228,7 +228,7 @@
 	imgs.crossOrigin = 'anonymous';
 	function draw(){
           //192.168.7.2 for usb, 10.1.1.100 ethernet (static IP)
-          imgs.src = "http://192.168.7.2:8090/?action=snapshot&n=" + (++imageNr);
+          imgs.src = "http://10.1.1.100:8090/?action=snapshot&n=" + (++imageNr);
           ctx.drawImage(imgs,0,0);
   }
 	draw();

@@ -40,8 +40,8 @@ kamera_a = "P9_21"
 kamera_b = "P9_22"
 
 PWM.cleanup()
-subprocess.Popen("config-pin -a p9-21 pwm",shell=True)
-subprocess.Popen("config-pin -a p9-22 pwm",shell=True)
+subprocess.Popen("config-pin  p9-21 pwm",shell=True)
+subprocess.Popen("config-pin  p9-22 pwm",shell=True)
 subprocess.Popen("echo 0 > export",cwd="/sys/class/pwm/pwmchip1",shell=True)
 subprocess.Popen("echo 1 > export",cwd="/sys/class/pwm/pwmchip1",shell=True)
 subprocess.Popen("sudo sh -c 'echo 16666666 > period'",cwd="/sys/class/pwm/pwm-1:0",shell=True)
@@ -151,8 +151,8 @@ def RRoll():
 def DPitch():
     global Angle_P
     Angle_P=Angle_P+90000
-    if Angle_P>2000000:
-	Angle_P=2000000
+    if Angle_P>2300000:
+	Angle_P=2300000
     command="sudo sh -c 'echo "+str(Angle_P)+" > duty_cycle'"
     subprocess.Popen(command,cwd="/sys/class/pwm/pwm-1:0",shell=True)
 def UPitch():
