@@ -40,8 +40,8 @@ kamera_a = "P9_21"
 kamera_b = "P9_22"
 
 PWM.cleanup()
-subprocess.Popen("config-pin  p9-21 pwm",shell=True)
-subprocess.Popen("config-pin  p9-22 pwm",shell=True)
+subprocess.Popen("config-pin -a p9-21 pwm",shell=True)
+subprocess.Popen("config-pin -a p9-22 pwm",shell=True)
 subprocess.Popen("echo 0 > export",cwd="/sys/class/pwm/pwmchip1",shell=True)
 subprocess.Popen("echo 1 > export",cwd="/sys/class/pwm/pwmchip1",shell=True)
 subprocess.Popen("sudo sh -c 'echo 16666666 > period'",cwd="/sys/class/pwm/pwm-1:0",shell=True)
@@ -80,10 +80,10 @@ def Go(L, R, period):
 
 # Turn all motors off
 def StopMotors():
-    PWM.stop(motor_l)
-    PWM.stop(motor_p)
-    GPIO.output(reset_AB, GPIO.LOW)
-    GPIO.output(reset_CD, GPIO.LOW)
+    PWM.set_duty_cycle(motor_l, 50)
+    PWM.set_duty_cycle(motor_p, 50)
+    GPIO.output(reset_AB, GPIO.HIGH)
+    GPIO.output(reset_CD, GPIO.HIGH)
 
 # Turn both motors in the same direstion
 def Forwards():
@@ -122,10 +122,9 @@ def Retard(dc):
 def Brake():
     PWM.set_duty_cycle(motor_l, 50)
     PWM.set_duty_cycle(motor_p, 50)
-    GPIO.output(reset_AB, GPIO.HIGH)
-    GPIO.output(reset_CD, GPIO.HIGH)
+    GPIO.output(reset_AB, GPIO.LOW)
+    GPIO.output(reset_CD, GPIO.LOW)
     #time.sleep(period)
-    
 
 def Light():
     global LED_duty_current
@@ -151,8 +150,8 @@ def RRoll():
 def DPitch():
     global Angle_P
     Angle_P=Angle_P+90000
-    if Angle_P>2300000:
-	Angle_P=2300000
+    if Angle_P>2000000:
+	Angle_P=2000000
     command="sudo sh -c 'echo "+str(Angle_P)+" > duty_cycle'"
     subprocess.Popen(command,cwd="/sys/class/pwm/pwm-1:0",shell=True)
 def UPitch():
@@ -184,10 +183,9 @@ while True:
     if (char == "b\n"):
         Brake()
 	time.sleep(button_delay)
-    elif (char == "u"):
+    elif (char == "u\n"):
         StopMotors()
-        PWM.cleanup()
-        exit(0)
+        time.sleep(button_delay)
     elif (char == "a\n"):
         Left()
         time.sleep(button_delay)
@@ -226,24 +224,22 @@ while True:
         Light()
         time.sleep(button_delay)
     elif (char == "c\n"):
-	subprocess.Popen("sudo systemctl stop mjpg-streamer",shell=True)
 	if video0:
-	    subprocess.Popen("sed -i 's/video0/video4/' /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service",shell=True)
+	    subprocess.Popen("sed -i 's/video0/video2/' /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service",shell=True)
   	    video0=False
 	else:
-	    subprocess.Popen("sed -i 's/video4/video0/' /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service",shell=True)
+	    subprocess.Popen("sed -i 's/video2/video0/' /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service",shell=True)
 	    video0=True
-	time.sleep(1)
 	subprocess.Popen("sudo install -m 644 /opt/scripts/tools/software/mjpg-streamer/mjpg-streamer.service /etc/systemd/system",shell=True)
+	#time.sleep(10)
 	subprocess.Popen("sudo systemctl daemon-reload",shell=True)
-	time.sleep(1)
-	subprocess.Popen("sudo systemctl restart mjpg-streamer",shell=True)
+	subprocess.Popen("sudo systemctl restart mjpg-streamer || true",shell=True)
 
    # print("speed: ", duty_current)
    # print("pitch: ", Angle_P)
    # print("roll: ", Angle_R)
-    GPIO.output(reset_AB, GPIO.LOW)
-    GPIO.output(reset_CD, GPIO.LOW)
+   # GPIO.output(reset_AB, GPIO.LOW)
+   # GPIO.output(reset_CD, GPIO.LOW)
 
 
 
